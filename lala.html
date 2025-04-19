@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Eyes That Follow Your Eyes</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/clmtrackr/1.1.2/clmtrackr.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5e6ff;
+            overflow: hidden;
+        }
+        
+        #videoElement {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 160px;
+            height: 120px;
+            opacity: 0.4;
+            border-radius: 8px;
+            transform: scaleX(-1);
+
+            z-index: -10;
+            transition: opacity 0.3s;
+        }
+        
+        #videoElement:hover {
+            opacity: 0.8;
+        }
+        
+        #canvas {
+            position: absolute;
+            top: 10px;
+            right: 180px;
+            width: 160px;
+            height: 120px;
+            border-radius: 8px;
+            opacity: 0.4;
+            z-index: 10;
+            transition: opacity 0.3s;
+        }
+        
+        #canvas:hover {
+            opacity: 0.8;
+        }
+        
+        #eyes-container {
+            position: relative;
+            width: 300px;
+            height: 150px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .eye {
+            width: 120px;
+            height: 120px;
+            background-color: white;
+            border-radius: 50%;
+            position: relative;
+            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+            overflow: hidden;
+            transition: transform 0.05s ease-out;
+        }
+        
+        .pupil {
+            width: 30px; /* Smaller pupil for cuter look */
+            height: 30px;
+            background-color: #333;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.3s, height 0.3s;
+        }
+        
+        .iris {
+            width: 100px; /* Larger iris for cuter look */
+            height: 100px;
+            background: radial-gradient(circle, #8a64e3 0%, #6941c4 100%);
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            transition: transform 0.05s ease-out;
+        }
+        
+        .highlight {
+            width: 25px; /* Slightly larger highlight */
+            height: 25px;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 25%;
+            left: 25%;
+            opacity: 0.9; /* Enhanced shine */
+        }
+        
+        .highlight-small {
+            width: 15px; /* Slightly larger small highlight */
+            height: 15px;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 50%;
+            left: 60%;
+            opacity: 0.7;
+        }
+        
+        .blink {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #f5e6ff;
+            top: -100%;
+            border-radius: 50% 50% 0 0;
+            transition: all 0.15s ease;
+            z-index: 5;
+        }
+        
+        .blink-bottom {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: #f5e6ff;
+            bottom: -100%;
+            border-radius: 0 0 50% 50%;
+            transition: all 0.15s ease;
+            z-index: 5;
+        }
+        
+        .eyelash {
+            position: absolute;
+            width: 20px;
+            height: 8px;
+            background-color: #333;
+            border-radius: 4px;
+            z-index: 4;
+        }
+        
+        #status {
+            position: fixed;
+            bottom: 20px;
+            width: 100%;
+            text-align: center;
+            font-family: Arial, sans-serif;
+            color: #6941c4;
+        }
+        
+        #debug-info {
+            position: fixed;
+            bottom: 50px;
+            width: 100%;
+            text-align: center;
+            font-family: monospace;
+            font-size: 12px;
+            color: #6941c4;
+            opacity: 0.7;
+        }
+        
+        #welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(245, 230, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            font-family: Arial, sans-serif;
+        }
+        
+        #welcome-overlay h1 {
+            color: #6941c4;
+            margin-bottom: 20px;
+        }
+        
+        #welcome-overlay p {
+            color: #333;
+            max-width: 600px;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        #start-button {
+            padding: 12px 24px;
+            background-color: #6941c4;
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        
+        #start-button:hover {
+            background-color: #8a64e3;
+        }
+        
+        .eye-marker {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid rgba(105, 65, 196, 0.8);
+            transform: translate(-50%, -50%);
+            pointer-events: none;
+            z-index: 15;
+        }
+        
+        #left-eye-marker {
+            background-color: rgba(255, 100, 100, 0.3);
+        }
+        
+        #right-eye-marker {
+            background-color: rgba(100, 100, 255, 0.3);
+        }
+        
+        #calibration-message {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: rgba(105, 65, 196, 0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            z-index: 50;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div id="welcome-overlay">
+        <h1>Interactive Cute Eyes</h1>
+        <p>Click the button below to allow camera access. These eyes will look directly into your eyes and follow your eye movements! For best results, sit in a well-lit area and face the camera directly.</p>
+        <button id="start-button">Start Experience</button>
+    </div>
+
+    <video id="videoElement" width="320" height="240" autoplay></video>
+    <canvas id="canvas" width="320" height="240"></canvas>
+    
+    <div id="eyes-container">
+        <div class="eye left-eye">
+            <div class="iris left-iris">
+                <div class="pupil"></div>
+                <div class="highlight"></div>
+                <div class="highlight-small"></div>
+            </div>
+            <div class="blink"></div>
+            <div class="blink-bottom"></div>
+            <div class="eyelash" style="top: -4px; left: 30px; transform: rotate(20deg);"></div>
+            <div class="eyelash" style="top: -4px; left: 60px; transform: rotate(0deg);"></div>
+            <div class="eyelash" style="top: -4px; left: 90px; transform: rotate(-20deg);"></div>
+        </div>
+        
+        <div class="eye right-eye">
+            <div class="iris right-iris">
+                <div class="pupil"></div>
+                <div class="highlight"></div>
+                <div class="highlight-small"></div>
+            </div>
+            <div class="blink"></div>
+            <div class="blink-bottom"></div>
+            <div class="eyelash" style="top: -4px; left: 30px; transform: rotate(20deg);"></div>
+            <div class="eyelash" style="top: -4px; left: 60px; transform: rotate(0deg);"></div>
+            <div class="eyelash" style="top: -4px; left: 90px; transform: rotate(-20deg);"></div>
+        </div>
+    </div>
+    
+    <div id="status">Waiting for camera permission...</div>
+    <div id="debug-info"></div>
+    <div id="left-eye-marker" class="eye-marker"></div>
+    <div id="right-eye-marker" class="eye-marker"></div>
+    
+    <div id="calibration-message">
+        Look directly at the camera for eye calibration...
+    </div>
+
+    <script>
+        document.getElementById('start-button').addEventListener('click', () => {
+            document.getElementById('welcome-overlay').style.display = 'none';
+            initializeCamera();
+        });
+
+        function initializeCamera() {
+            const video = document.getElementById('videoElement');
+            const canvas = document.getElementById('canvas');
+            const ctx = canvas.getContext('2d');
+            const statusElement = document.getElementById('status');
+            const debugInfo = document.getElementById('debug-info');
+            const leftEye = document.querySelector('.left-iris');
+            const rightEye = document.querySelector('.right-iris');
+            const leftEyeBlink = document.querySelector('.left-eye .blink');
+            const rightEyeBlink = document.querySelector('.right-eye .blink');
+            const leftEyeBlinkBottom = document.querySelector('.left-eye .blink-bottom');
+            const rightEyeBlinkBottom = document.querySelector('.right-eye .blink-bottom');
+            const leftEyeMarker = document.getElementById('left-eye-marker');
+            const rightEyeMarker = document.getElementById('right-eye-marker');
+            const calibrationMessage = document.getElementById('calibration-message');
+            
+            let ctracker;
+            let lastBlinkTime = Date.now();
+            let leftEyePos = { x: 0, y: 0 };
+            let rightEyePos = { x: 0, y: 0 };
+            let lookAtEyeIndex = 0; // 0 = left eye, 1 = right eye
+            let calibrating = true;
+            let eyePositionsHistory = [];
+            const maxHistoryLength = 50; // Increased for better averaging
+            let calibratedLeftEye = { x: 0, y: 0 };
+            let calibratedRightEye = { x: 0, y: 0 };
+            
+            // Request camera access
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ 
+                    video: { 
+                        width: { ideal: 640 },
+                        height: { ideal: 480 },
+                        facingMode: "user"
+                    } 
+                })
+                .then(function(stream) {
+                    video.srcObject = stream;
+                    statusElement.textContent = "Camera connected! Looking for your eyes...";
+                    
+                    // Start calibration
+                    startCalibration();
+                    
+                    // Initialize face tracker
+                    ctracker = new clm.tracker();
+                    ctracker.init();
+                    ctracker.start(video);
+                    
+                    // Start tracking loop
+                    trackEyes();
+                    
+                    // Draw debug visualization
+                    drawLoop();
+                    
+                    // Start random blinking
+                    setInterval(randomBlink, 3000);
+                })
+                .catch(function(error) {
+                    statusElement.textContent = "Camera access denied or not available. Please allow camera access.";
+                    console.error("Camera error: ", error);
+                });
+            } else {
+                statusElement.textContent = "Your browser doesn't support camera access.";
+            }
+            
+            function startCalibration() {
+                calibrating = true;
+                calibrationMessage.style.display = 'block';
+                
+                setTimeout(() => {
+                    calibrating = false;
+                    calibrationMessage.style.display = 'none';
+                    
+                    if (eyePositionsHistory.length > 0) {
+                        const sumLeft = eyePositionsHistory.reduce((acc, pos) => {
+                            acc.x += pos.left.x;
+                            acc.y += pos.left.y;
+                            return acc;
+                        }, { x: 0, y: 0 });
+                        const sumRight = eyePositionsHistory.reduce((acc, pos) => {
+                            acc.x += pos.right.x;
+                            acc.y += pos.right.y;
+                            return acc;
+                        }, { x: 0, y: 0 });
+                        
+                        calibratedLeftEye.x = sumLeft.x / eyePositionsHistory.length;
+                        calibratedLeftEye.y = sumLeft.y / eyePositionsHistory.length;
+                        calibratedRightEye.x = sumRight.x / eyePositionsHistory.length;
+                        calibratedRightEye.y = sumRight.y / eyePositionsHistory.length;
+                    } else {
+                        // Fallback to video center
+                        const videoWidth = video.videoWidth || 640;
+                        const videoHeight = video.videoHeight || 480;
+                        calibratedLeftEye = { x: videoWidth / 2, y: videoHeight / 2 };
+                        calibratedRightEye = { x: videoWidth / 2, y: videoHeight / 2 };
+                    }
+                }, 5000);
+            }
+            
+            function trackEyes() {
+                const positions = ctracker.getCurrentPosition();
+                
+                if (positions && positions.length > 0) {
+                    const leftEyePoint = positions[27];
+                    const rightEyePoint = positions[32];
+                    
+                    if (leftEyePoint && rightEyePoint) {
+                        const newLeftEyeX = leftEyePoint[0];
+                        const newLeftEyeY = leftEyePoint[1];
+                        const newRightEyeX = rightEyePoint[0];
+                        const newRightEyeY = rightEyePoint[1];
+                        
+                        // Smooth motion
+                        leftEyePos = {
+                            x: leftEyePos.x * 0.8 + newLeftEyeX * 0.2,
+                            y: leftEyePos.y * 0.8 + newLeftEyeY * 0.2
+                        };
+                        rightEyePos = {
+                            x: rightEyePos.x * 0.8 + newRightEyeX * 0.2,
+                            y: rightEyePos.y * 0.8 + newRightEyeY * 0.2
+                        };
+                        
+                        // Update markers
+                        leftEyeMarker.style.left = leftEyePos.x + 'px';
+                        leftEyeMarker.style.top = leftEyePos.y + 'px';
+                        rightEyeMarker.style.left = rightEyePos.x + 'px';
+                        rightEyeMarker.style.top = rightEyePos.y + 'px';
+                        
+                        // Store positions during calibration
+                        if (calibrating) {
+                            eyePositionsHistory.push({
+                                left: { x: newLeftEyeX, y: newLeftEyeY },
+                                right: { x: newRightEyeX, y: newRightEyeY }
+                            });
+                            if (eyePositionsHistory.length > maxHistoryLength) {
+                                eyePositionsHistory.shift();
+                            }
+                        }
+                        
+                        // Detect blinks
+                        const leftEyeTop = positions[24][1];
+                        const leftEyeBottom = positions[26][1];
+                        const leftEyeHeight = Math.abs(leftEyeTop - leftEyeBottom);
+                        const rightEyeTop = positions[29][1];
+                        const rightEyeBottom = positions[31][1];
+                        const rightEyeHeight = Math.abs(rightEyeTop - rightEyeBottom);
+                        const faceHeight = Math.abs(positions[7][1] - positions[33][1]);
+                        const eyeOpenness = (leftEyeHeight + rightEyeHeight) / (2 * faceHeight);
+                        
+                        if (eyeOpenness < 0.03 && Date.now() - lastBlinkTime > 1000) {
+                            blink();
+                            lastBlinkTime = Date.now();
+                        }
+                        
+                        // Alternate gaze
+                        const now = Date.now();
+                        if (now % 5000 < 2500) {
+                            lookAtEyeIndex = 0;
+                            statusElement.textContent = "Looking at your left eye";
+                        } else {
+                            lookAtEyeIndex = 1;
+                            statusElement.textContent = "Looking at your right eye";
+                        }
+                        
+                        // Calculate offsets from calibrated positions
+                        // Calculate mirrored offsets
+                        const videoWidth = video.videoWidth || 640;
+                        const videoHeight = video.videoHeight || 480;
+                        let targetEye = lookAtEyeIndex === 0 ? leftEyePos : rightEyePos;
+                        let targetCalibratedEye = lookAtEyeIndex === 0 ? calibratedLeftEye : calibratedRightEye;
+
+                        // invert the X‑axis because the video is flipped
+                        const xOffset = (targetCalibratedEye.x - targetEye.x) / videoWidth;
+                        const yOffset = (targetEye.y - targetCalibratedEye.y) / videoHeight;
+
+                        moveEyes(xOffset, yOffset);
+
+                        
+                        debugInfo.textContent = `Tracking eyes: L(${Math.round(leftEyePos.x)}, ${Math.round(leftEyePos.y)}) R(${Math.round(rightEyePos.x)}, ${Math.round(rightEyePos.y)})`;
+                    }
+                }
+                
+                requestAnimationFrame(trackEyes);
+            }
+            
+            function moveEyes(xOffset, yOffset) {
+                const maxMovement = 30;
+                const factor = 300; // Adjust based on desired sensitivity
+                const xMove = Math.max(-maxMovement, Math.min(maxMovement, xOffset * factor));
+                const yMove = Math.max(-maxMovement, Math.min(maxMovement, yOffset * factor));
+                
+                // Apply movement with proper centering
+                leftEye.style.transform = `translate(-50%, -50%) translate(${xMove}px, ${yMove}px)`;
+                rightEye.style.transform = `translate(-50%, -50%) translate(${xMove}px, ${yMove}px)`;
+                
+                // Pupil size adjustment
+                const attention = 0.8 - (Math.abs(xOffset) + Math.abs(yOffset)) * 0.5;
+                const pupilSize = Math.max(20, Math.min(35, 30 + attention * 10));
+                document.querySelectorAll('.pupil').forEach(pupil => {
+                    pupil.style.width = pupilSize + 'px';
+                    pupil.style.height = pupilSize + 'px';
+                });
+            }
+            
+            function drawLoop() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+                if (ctracker && ctracker.getCurrentPosition()) {
+                    ctracker.draw(canvas);
+                }
+                ctx.strokeStyle = 'rgba(105, 65, 196, 0.8)';
+                ctx.lineWidth = 2;
+                if (leftEyePos.x && leftEyePos.y) {
+                    ctx.beginPath();
+                    ctx.arc(leftEyePos.x, leftEyePos.y, 5, 0, 2 * Math.PI);
+                    ctx.stroke();
+                }
+                if (rightEyePos.x && rightEyePos.y) {
+                    ctx.beginPath();
+                    ctx.arc(rightEyePos.x, rightEyePos.y, 5, 0, 2 * Math.PI);
+                    ctx.stroke();
+                }
+                requestAnimationFrame(drawLoop);
+            }
+            
+            function blink() {
+                leftEyeBlink.style.top = '0%';
+                rightEyeBlink.style.top = '0%';
+                leftEyeBlinkBottom.style.bottom = '0%';
+                rightEyeBlinkBottom.style.bottom = '0%';
+                setTimeout(() => {
+                    leftEyeBlink.style.top = '-100%';
+                    rightEyeBlink.style.top = '-100%';
+                    leftEyeBlinkBottom.style.bottom = '-100%';
+                    rightEyeBlinkBottom.style.bottom = '-100%';
+                }, 150);
+            }
+            
+            function randomBlink() {
+                const now = Date.now();
+                if (now - lastBlinkTime > 2000) {
+                    blink();
+                    lastBlinkTime = now;
+                    if (Math.random() < 0.3) {
+                        setTimeout(blink, 400);
+                    }
+                }
+                const nextBlinkTime = 2000 + Math.random() * 4000;
+                setTimeout(randomBlink, nextBlinkTime);
+            }
+            
+            // Mouse fallback
+            document.addEventListener('mousemove', (e) => {
+                if ((!ctracker || !ctracker.getCurrentPosition() || 
+                    !ctracker.getCurrentPosition().length) && 
+                    document.getElementById('welcome-overlay').style.display === 'none') {
+                    const xPercent = (e.clientX / window.innerWidth) - 0.5;
+                    const yPercent = (e.clientY / window.innerHeight) - 0.5;
+                    moveEyes(xPercent, yPercent);
+                    debugInfo.textContent = `Mouse fallback: ${e.clientX}, ${e.clientY}`;
+                }
+            });
+            
+            document.addEventListener('click', blink);
+        }
+    </script>
+</body>
+</html>
