@@ -13,26 +13,26 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
-            background-color: #f5e6ff;
+            background-color: #1a1a14;
             overflow: hidden;
+            color: #d8c3a5;
         }
         
         #videoElement {
             position: absolute;
-            top: 10px;
+            top: 0px;
             right: 10px;
             width: 160px;
             height: 120px;
-            opacity: 0.4;
+            opacity: 0;
             border-radius: 8px;
             transform: scaleX(-1);
-
             z-index: -10;
             transition: opacity 0.3s;
         }
         
         #videoElement:hover {
-            opacity: 0.8;
+            opacity: 0;
         }
         
         #canvas {
@@ -42,109 +42,191 @@
             width: 160px;
             height: 120px;
             border-radius: 8px;
-            opacity: 0.4;
+            opacity: 0;
             z-index: 10;
             transition: opacity 0.3s;
         }
         
         #canvas:hover {
-            opacity: 0.8;
+            opacity: 0;
         }
         
         #eyes-container {
             position: relative;
-            width: 300px;
-            height: 150px;
+            width: 410px;
+            height: 200px;
             display: flex;
             justify-content: space-between;
+            align-items: center;
         }
-        
+
         .eye {
-            width: 120px;
-            height: 120px;
-            background-color: white;
+            width: 180px;
+            height: 180px;
+            background-color: #eee8d5;
             border-radius: 50%;
             position: relative;
-            box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 9px #5c7e3a ;
             overflow: hidden;
-            transition: transform 0.05s ease-out;
-        }
+            transition: transform 0.1s ease-out;
+            border: 4px solid #3c3429;
         
+        }
+
         .pupil {
-            width: 30px; /* Smaller pupil for cuter look */
+            width: 30px;
             height: 30px;
-            background-color: #333;
+            background-color: #1a1a14;
             border-radius: 50%;
             position: absolute;
-            top: 50%;
+            top: 45%;
             left: 50%;
             transform: translate(-50%, -50%);
             transition: width 0.3s, height 0.3s;
+            box-shadow: 0 0 10px rgba(0,0,0,0.7) inset;
         }
-        
+
         .iris {
-            width: 100px; /* Larger iris for cuter look */
-            height: 100px;
-            background: radial-gradient(circle, #8a64e3 0%, #6941c4 100%);
+            width: 110px;
+            height: 110px;
             border-radius: 50%;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            transition: transform 0.05s ease-out;
+            transition: transform 0.1s ease-out;
         }
-        
+
+        /* Green eyes */
+        .left-iris {
+            background: radial-gradient(circle, #9ab973 0%, #5c7e3a 60%, #394d23 100%);
+            box-shadow: 0 0 10px rgba(0,0,0,0.5) inset;
+            /* background: radial-gradient(circle, #c19a6b 0%, #8c6239 60%, #5c4023 100%);
+            box-shadow: 0 0 10px rgba(0,0,0,0.5) inset; */
+        }
+
+        /* Brown eyes */
+        .right-iris {
+            /* background: radial-gradient(circle, #c19a6b 0%, #8c6239 60%, #5c4023 100%);
+            box-shadow: 0 0 10px rgba(0,0,0,0.5) inset; */
+            background: radial-gradient(circle, #9ab973 0%, #5c7e3a 60%, #394d23 100%);
+            box-shadow: 0 0 10px rgba(0,0,0,0.5) inset;
+        }
+
         .highlight {
-            width: 25px; /* Slightly larger highlight */
-            height: 25px;
+            width: 32px;
+            height: 32px;
             background-color: white;
             border-radius: 50%;
             position: absolute;
             top: 25%;
             left: 25%;
-            opacity: 0.9; /* Enhanced shine */
+            opacity: 0.85;
+            box-shadow: 0 0 5px rgba(255,255,255,0.8);
         }
-        
+
         .highlight-small {
-            width: 15px; /* Slightly larger small highlight */
-            height: 15px;
+            width: 22px;
+            height: 22px;
             background-color: white;
             border-radius: 50%;
             position: absolute;
             top: 50%;
-            left: 60%;
+            left: 63%;
+            opacity: 0.8;
+        }
+
+        .highlight-tiny {
+            width: 10px;
+            height: 10px;
+            background-color: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 30%;
+            left: 70%;
             opacity: 0.7;
         }
-        
+
         .blink {
             position: absolute;
             width: 100%;
             height: 100%;
-            background-color: #f5e6ff;
+            background-color: #1a1a14;
             top: -100%;
             border-radius: 50% 50% 0 0;
             transition: all 0.15s ease;
             z-index: 5;
         }
-        
+
         .blink-bottom {
             position: absolute;
             width: 100%;
             height: 100%;
-            background-color: #f5e6ff;
+            background-color: #1a1a14;
             bottom: -100%;
             border-radius: 0 0 50% 50%;
             transition: all 0.15s ease;
             z-index: 5;
         }
-        
+
+        /* .eyelashes {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 6;
+        }
+
         .eyelash {
             position: absolute;
-            width: 20px;
-            height: 8px;
-            background-color: #333;
-            border-radius: 4px;
-            z-index: 4;
+            width: 18px;
+            height: 4px;
+            background-color: #3c3429;
+            top: 15px;
+            border-radius: 3px;
+        } */
+/* 
+        .eyelash:nth-child(1) {
+            left: 30px;
+            transform: rotate(-30deg);
+        }
+
+        .eyelash:nth-child(2) {
+            left: 60px;
+            transform: rotate(-10deg);
+        } */
+/* 
+        .eyelash:nth-child(3) {
+            right: 60px;
+            transform: rotate(10deg);
+        }
+
+        .eyelash:nth-child(4) {
+            right: 30px;
+            transform: rotate(30deg);
+        } */
+
+        .happy-expression {
+            position: absolute;
+            width: 100%;
+            height: 35px;
+            bottom: 15px;
+            border-radius: 50%;
+            box-shadow: 0 15px 0 0 rgba(60, 52, 41, 0.2);
+            z-index: 2;
+        }
+
+        @keyframes subtle-bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-2px); }
+        }
+
+        .eye {
+            animation: subtle-bounce 3s infinite ease-in-out;
+        }
+
+        .eye:first-child {
+            animation-delay: 0.8s;
         }
         
         #status {
@@ -153,7 +235,7 @@
             width: 100%;
             text-align: center;
             font-family: Arial, sans-serif;
-            color: #6941c4;
+            color: #8c6239;
         }
         
         #debug-info {
@@ -163,7 +245,7 @@
             text-align: center;
             font-family: monospace;
             font-size: 12px;
-            color: #6941c4;
+            color: #5c7e3a;
             opacity: 0.7;
         }
         
@@ -173,7 +255,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(245, 230, 255, 0.9);
+            background-color: rgba(26, 26, 20, 0.96);
             display: flex;
             flex-direction: column;
             justify-content: center;
@@ -183,30 +265,33 @@
         }
         
         #welcome-overlay h1 {
-            color: #6941c4;
+            color: #d8c3a5;
             margin-bottom: 20px;
+            font-size: 2.5em;
         }
         
         #welcome-overlay p {
-            color: #333;
+            color: #d8c3a5;
             max-width: 600px;
             text-align: center;
             margin-bottom: 30px;
+            font-size: 1.2em;
+            line-height: 1.6;
         }
         
         #start-button {
-            padding: 12px 24px;
-            background-color: #6941c4;
-            color: white;
+            padding: 14px 28px;
+            background-color: #5c7e3a;
+            color: #eee8d5;
             border: none;
             border-radius: 25px;
-            font-size: 16px;
+            font-size: 18px;
             cursor: pointer;
             transition: background-color 0.3s;
         }
         
         #start-button:hover {
-            background-color: #8a64e3;
+            background-color: #8c6239;
         }
         
         .eye-marker {
@@ -214,18 +299,19 @@
             width: 20px;
             height: 20px;
             border-radius: 50%;
-            border: 2px solid rgba(105, 65, 196, 0.8);
+            border: 2px solid rgba(92, 126, 58, 0.8);
             transform: translate(-50%, -50%);
             pointer-events: none;
             z-index: 15;
+            opacity: 0;
         }
         
         #left-eye-marker {
-            background-color: rgba(255, 100, 100, 0.3);
+            background-color: rgba(140, 98, 57, 0.3);
         }
         
         #right-eye-marker {
-            background-color: rgba(100, 100, 255, 0.3);
+            background-color: rgba(92, 126, 58, 0.3);
         }
         
         #calibration-message {
@@ -233,8 +319,8 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            background-color: rgba(105, 65, 196, 0.9);
-            color: white;
+            background-color: rgba(60, 52, 41, 0.9);
+            color: #eee8d5;
             padding: 20px;
             border-radius: 10px;
             font-family: Arial, sans-serif;
@@ -246,7 +332,7 @@
 </head>
 <body>
     <div id="welcome-overlay">
-        <h1>Interactive Cute Eyes</h1>
+        <h1>Interactive Earth-Toned Eyes</h1>
         <p>Click the button below to allow camera access. These eyes will look directly into your eyes and follow your eye movements! For best results, sit in a well-lit area and face the camera directly.</p>
         <button id="start-button">Start Experience</button>
     </div>
@@ -260,12 +346,17 @@
                 <div class="pupil"></div>
                 <div class="highlight"></div>
                 <div class="highlight-small"></div>
+                <div class="highlight-tiny"></div>
             </div>
             <div class="blink"></div>
             <div class="blink-bottom"></div>
-            <div class="eyelash" style="top: -4px; left: 30px; transform: rotate(20deg);"></div>
-            <div class="eyelash" style="top: -4px; left: 60px; transform: rotate(0deg);"></div>
-            <div class="eyelash" style="top: -4px; left: 90px; transform: rotate(-20deg);"></div>
+            <div class="happy-expression"></div>
+            <div class="eyelashes">
+                <div class="eyelash"></div>
+                <div class="eyelash"></div>
+                <div class="eyelash"></div>
+                <div class="eyelash"></div>
+            </div>
         </div>
         
         <div class="eye right-eye">
@@ -273,12 +364,17 @@
                 <div class="pupil"></div>
                 <div class="highlight"></div>
                 <div class="highlight-small"></div>
+                <div class="highlight-tiny"></div>
             </div>
             <div class="blink"></div>
             <div class="blink-bottom"></div>
-            <div class="eyelash" style="top: -4px; left: 30px; transform: rotate(20deg);"></div>
-            <div class="eyelash" style="top: -4px; left: 60px; transform: rotate(0deg);"></div>
-            <div class="eyelash" style="top: -4px; left: 90px; transform: rotate(-20deg);"></div>
+            <div class="happy-expression"></div>
+            <div class="eyelashes">
+                <div class="eyelash"></div>
+                <div class="eyelash"></div>
+                <div class="eyelash"></div>
+                <div class="eyelash"></div>
+            </div>
         </div>
     </div>
     
@@ -483,8 +579,8 @@
             }
             
             function moveEyes(xOffset, yOffset) {
-                const maxMovement = 30;
-                const factor = 300; // Adjust based on desired sensitivity
+                const maxMovement = 35; // Increased for more dramatic movement
+                const factor = 350; // Adjusted for better sensitivity
                 const xMove = Math.max(-maxMovement, Math.min(maxMovement, xOffset * factor));
                 const yMove = Math.max(-maxMovement, Math.min(maxMovement, yOffset * factor));
                 
@@ -494,7 +590,7 @@
                 
                 // Pupil size adjustment
                 const attention = 0.8 - (Math.abs(xOffset) + Math.abs(yOffset)) * 0.5;
-                const pupilSize = Math.max(20, Math.min(35, 30 + attention * 10));
+                const pupilSize = Math.max(25, Math.min(45, 35 + attention * 15));
                 document.querySelectorAll('.pupil').forEach(pupil => {
                     pupil.style.width = pupilSize + 'px';
                     pupil.style.height = pupilSize + 'px';
@@ -507,7 +603,7 @@
                 if (ctracker && ctracker.getCurrentPosition()) {
                     ctracker.draw(canvas);
                 }
-                ctx.strokeStyle = 'rgba(105, 65, 196, 0.8)';
+                ctx.strokeStyle = 'rgba(92, 126, 58, 0.8)';
                 ctx.lineWidth = 2;
                 if (leftEyePos.x && leftEyePos.y) {
                     ctx.beginPath();
