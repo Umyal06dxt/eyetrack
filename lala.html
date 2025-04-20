@@ -565,10 +565,10 @@
                         let targetCalibratedEye = lookAtEyeIndex === 0 ? calibratedLeftEye : calibratedRightEye;
 
                         // invert the X‑axis because the video is flipped
-                        const xOffset = (targetCalibratedEye.x - targetEye.x) / videoWidth;
-                        const yOffset = (targetEye.y - targetCalibratedEye.y) / videoHeight;
+                        const xOffset = (  targetCalibratedEye.x - targetEye.x  ) / videoWidth;
+                        const yOffset = (targetCalibratedEye.y - targetEye.y ) / videoHeight;
 
-                        moveEyes(xOffset, yOffset);
+                        moveEyes(yOffset, xOffset);
 
                         
                         debugInfo.textContent = `Tracking eyes: L(${Math.round(leftEyePos.x)}, ${Math.round(leftEyePos.y)}) R(${Math.round(rightEyePos.x)}, ${Math.round(rightEyePos.y)})`;

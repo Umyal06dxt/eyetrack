@@ -586,13 +586,13 @@
             });
             
             // Add subtle breathing animation
-            gsap.to('.eye', {
-                scale: 1.03,
-                duration: 2,
-                repeat: -1,
-                yoyo: true,
-                ease: "sine.inOut"
-            });
+            // gsap.to('.eye', {
+            //     scale: 1.03,
+            //     duration: 2,
+            //     repeat: -1,
+            //     yoyo: true,
+            //     ease: "sine.inOut"
+            // });
             
             // Animate pupils
             gsap.from('.pupil', {
@@ -810,62 +810,64 @@
                 requestAnimationFrame(trackEyes);
             }
             
-            function moveEyes(xOffset, yOffset) {
-                const maxMovement = 35; // Increased for more dramatic movement
-                const factor = 350; // Scaling factor for movement
-                
-                // Apply movement to both irises
-                const leftXMovement = -maxMovement * (xOffset) * factor / 100;
-                const leftYMovement = -maxMovement * (yOffset) * factor / 100;
-                const rightXMovement = -maxMovement * (xOffset) * factor / 100;
-                const rightYMovement = -maxMovement * (yOffset) * factor / 100;
-                
-                // Move irises with smooth animation
-                gsap.to(leftEye, {
-                    x: leftXMovement,
-                    y: leftYMovement,
-                    duration: 0.3,
-                    ease: "power2.out"
-                });
-                
-                gsap.to(rightEye, {
-                    x: rightXMovement,
-                    y: rightYMovement,
-                    duration: 0.3,
-                    ease: "power2.out"
-                });
-                
-                // Depth effect for pupils - they move slightly less than irises
-                const leftPupil = document.querySelector('.left-eye .pupil');
-                const rightPupil = document.querySelector('.right-eye .pupil');
-                
-                gsap.to(leftPupil, {
-                    x: leftXMovement * 0.7,
-                    y: leftYMovement * 0.7,
-                    duration: 0.3,
-                    ease: "power2.out"
-                });
-                
-                gsap.to(rightPupil, {
-                    x: rightXMovement * 0.7,
-                    y: rightYMovement * 0.7,
-                    duration: 0.3,
-                    ease: "power2.out"
-                });
-                
-                // Dynamic pupil dilation based on movement
-                const moveMagnitude = Math.sqrt(xOffset * xOffset + yOffset * yOffset);
-                const minPupilSize = 30;
-                const maxPupilSize = 50;
-                const newPupilSize = minPupilSize + Math.min(maxPupilSize - minPupilSize, moveMagnitude * 100);
-                
-                gsap.to('.pupil', {
-                    width: newPupilSize,
-                    height: newPupilSize,
-                    duration: 0.8,
-                    ease: "power2.out"
-                });
-            }
+           // Find this function in the script section of your code
+        function moveEyes(xOffset, yOffset) {
+            const maxMovement = 35; // Increased for more dramatic movement
+            const factor = 350; // Scaling factor for movement
+            
+            // MODIFIED: Changed the sign from negative to positive to reverse the direction
+            const leftXMovement = maxMovement * (xOffset) * factor / 100;
+            const leftYMovement = maxMovement * (yOffset) * factor / 100;
+            const rightXMovement = maxMovement * (xOffset) * factor / 100;
+            const rightYMovement = maxMovement * (yOffset) * factor / 100;
+            
+            // Move irises with smooth animation
+            gsap.to(leftEye, {
+                x: leftXMovement,
+                y: leftYMovement,
+                duration: 0.3,
+                ease: "power2.out"
+            });
+            
+            gsap.to(rightEye, {
+                x: rightXMovement,
+                y: rightYMovement,
+                duration: 0.3,
+                ease: "power2.out"
+            });
+            
+            // Depth effect for pupils - they move slightly less than irises
+            const leftPupil = document.querySelector('.left-eye .pupil');
+            const rightPupil = document.querySelector('.right-eye .pupil');
+            
+            // MODIFIED: Also changed signs here to maintain the depth effect
+            gsap.to(leftPupil, {
+                x: leftXMovement * 0.7,
+                y: leftYMovement * 0.7,
+                duration: 0.3,
+                ease: "power2.out"
+            });
+            
+            gsap.to(rightPupil, {
+                x: rightXMovement * 0.7,
+                y: rightYMovement * 0.7,
+                duration: 0.3,
+                ease: "power2.out"
+            });
+            
+            // Dynamic pupil dilation based on movement
+            const moveMagnitude = Math.sqrt(xOffset * xOffset + yOffset * yOffset);
+            const minPupilSize = 30;
+            const maxPupilSize = 50;
+            const newPupilSize = minPupilSize + Math.min(maxPupilSize - minPupilSize, moveMagnitude * 100);
+            
+            gsap.to('.pupil', {
+                width: newPupilSize,
+                height: newPupilSize,
+                duration: 0.8,
+                ease: "power2.out"
+            });
+        }
             
             function drawLoop() {
                 const canvas = document.getElementById('canvas');
