@@ -1,6 +1,6 @@
 # 👀 EyeMpress – Eyes That Follow You Back
 
-**EyeMpress** is an interactive browser-based experience that brings a cute pair of cartoon eyes to life—tracking your real eye movements and following your gaze in real time. Whether you're a tech enthusiast, an artist, or just looking to add some life to your website, EyeMpress blends emotion, interaction, and creativity beautifully.
+**EyeMpress** is an interactive browser-based experience that brings a cute pair of  eyes to life—tracking your real eye movements and following your gaze in real time. Whether you're a tech enthusiast, an artist, or just looking to add some life to your website, EyeMpress blends emotion, interaction, and creativity beautifully.
 
 ---
 
